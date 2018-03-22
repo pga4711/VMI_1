@@ -3,6 +3,8 @@ package com.example.philip.mytestwithintents;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -17,6 +19,8 @@ import android.widget.Button;
 import android.database.Cursor; //??okej?
 import android.content.Context; //????????????
 import android.net.Uri; //?????
+import android.widget.ImageView;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -30,9 +34,7 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_OPEN_IMAGE = 1;
 
     static final int REQUEST_OPEN_CAMERA = 2;
-    static final int REQUEST_PERMISSION_CAM = 3;
-    static final int REQUEST_TEST_PERMISSION_CAM = 4;
-    static final int REQUEST_TEST_PERMISSION_WRITESTORAGE = 5;
+    static final int REQUEST_PERMISSIONS = 3;
 
     static boolean ALL_PERMISSIONS_OK = false;
 
@@ -40,23 +42,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Log.d(TAG, "getApplicationContext().getPackageName()!!: " + getApplicationContext().getPackageName());
         Log.d(TAG, "SDK version is: " + Build.VERSION.SDK_INT);
         Log.d(TAG, "Applicationid  is: " + BuildConfig.APPLICATION_ID);
 
-        forceRightPermissions();
+        //THIS IS ONLY ALLOWED IN PROTOTYPE SOFTWARE, in a real realease on Google Play you have to handle
+        //permissions if the user presses DENY.
+        String[] permissions = {Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.RECORD_AUDIO};
+
+
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSIONS);
 
 
 
-
-        final Button button = findViewById(R.id.buttonX);
-        button.setOnClickListener(new View.OnClickListener() {
+        final Button callGalleryBtn = findViewById(R.id.buttonX);
+        callGalleryBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                Log.d(TAG, "hello123");
                 Log.d(TAG, "This is intent.getType(): " + intent.getType());
-
                 intent.setType("image/*");
                 Log.d(TAG, "This is intent.getType(): " + intent.getType());
                 Log.d(TAG, "this.getClass() : " + this.getClass());
@@ -73,121 +80,25 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        final Button buttonTestCamPerm = findViewById(R.id.buttonTestCamPerm);
-        buttonTestCamPerm.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Log.d(TAG, "Inside buttonTestCamPerm");
-
-                testCameraPermission();
-
-
-            }
-        });
-
-
-        final Button buttonDoCamPerm = findViewById(R.id.buttonDoCameraPerm);
-        buttonDoCamPerm.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Log.d(TAG, "Inside buttonDoCameraPerm");
-
-                doCameraPermission();
-            }
-        });
-
-
-        final Button buttonTestStoragePerm = findViewById(R.id.testStoragePerm);
-        buttonTestStoragePerm.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Log.d(TAG, "Inside buttonTestStoragePerm");
-
-                testStorageWritePerrmission();
-            }
-        });
-
-        final Button buttonDoStoragePerm = findViewById(R.id.doStoragePerm);
-        buttonDoStoragePerm.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Log.d(TAG, "Inside buttonDoStoragePerm");
-                doStorageWritePerrmission();
-            }
-        });
-
     }
-
-    private void forceRightPermissions() {
-        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-            //Om den inte har behörighet, exekvera behörighetsskylten.
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_TEST_PERMISSION_CAM);
-        }
-
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_TEST_PERMISSION_WRITESTORAGE);
-
-
-    }
-
-    private void doCameraPermission() {
-        Log.d(TAG, "Before requestPermission");
-
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_TEST_PERMISSION_CAM);
-
-        Log.d(TAG, "Before requestPermission");
-    }
-
-    private void testCameraPermission() {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_DENIED) {
-            Log.d(TAG, "true. Camera. Permission is denied");
-        } else
-            Log.d(TAG, "false. You have access to camera");
-        Log.d(TAG, "after permission IF");
-    }
-
-
-
-    private void doStorageWritePerrmission() {
-        Log.d(TAG, "Before requestPermission");
-
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_TEST_PERMISSION_WRITESTORAGE);
-
-        Log.d(TAG, "Before requestPermission");
-    }
-
-    private void testStorageWritePerrmission() {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_DENIED) {
-            Log.d(TAG, "true. Ext Storage. Permission is denied");
-        } else
-            Log.d(TAG, "false. You have access to ext storage");
-        Log.d(TAG, "after permission IF ext storage");
-    }
-
-
-
-
     //Denna anropas alltid när en activity är typ klar. Den funkar osm ett slot i QT.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == REQUEST_OPEN_IMAGE) {
             Log.d(TAG, "HELLO, This is data: " + data.getDataString());
-
             //Lite avancerad
             String filePath = getRealPathFromURI(getApplicationContext(), data.getData());
             Log.d(TAG, "WHat could this filePath be? " + filePath);
+
         } else if (requestCode == REQUEST_OPEN_CAMERA) {
-            Log.d(TAG, "We arrived here, but i do not do anything with it");
-            //och vad gör männskann här. När hen har fått tillbaka en bild
-        } else if (requestCode == REQUEST_PERMISSION_CAM) {
-            Log.d(TAG, "Done. in request code REQUEST_PERMISSION_CAM");
-
-        } else if (requestCode == REQUEST_TEST_PERMISSION_CAM) {
-            Log.d(TAG, "Done. in request code REQUEST_TEST_PERMISSION_CAM");
-        } else if (requestCode == REQUEST_TEST_PERMISSION_WRITESTORAGE) {
-            Log.d(TAG, "Done. in request code REQUEST_TEST_PERMISSION_WRITESTORAGE");
+            Log.d(TAG,"We arrived to read the file");
+            Log.d(TAG,"This should be the lastCameraFileUri: "+ lastCameraFileUri);
+            //och vad gör männskann här. När hen har fått tillbaka en bild. Jo
+            setPic();
+        } else if (requestCode == REQUEST_PERMISSIONS) {
+            Log.d(TAG, "permission jox har körts");
         }
-
     }
 //Anropas endast vid request image! inte vid kameraanrop
 
@@ -204,11 +115,8 @@ public class MainActivity extends AppCompatActivity {
                 cursor.close();
             }
         }
-
         //Frivilligt:  super.onActivityResult(requestCode, resultCode, data);
-
     }
-
 
     //Call Camera funktionalities
     //Den här ska starta upp kameran. Jag tror den ber android att starta kameran
@@ -229,18 +137,16 @@ public class MainActivity extends AppCompatActivity {
                 // Error occurred while creating the File
                 Log.d(TAG, "ERROR ex.getLocalizedMessage() : " + ex.getLocalizedMessage());
                 Log.d(TAG, "ERROR ex.getMessage()          : " + ex.getMessage());
-
             }
 
             // Continue only if the File was successfully created
             if (photoFile != null) {
-
-
                 //Denna getApplicationContext().getPackageName() returnerar com.example.philip.mytestwithintents
                 Uri photoURI = FileProvider.getUriForFile(this,
-                        getApplicationContext().getPackageName()+".fileprovider",
+                        getApplicationContext().getPackageName() + ".fileprovider",
                         photoFile);
                 lastCameraFileUri = photoFile.toString();
+                Log.d(TAG, "photoFile.toString(): " + photoFile.toString());
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_OPEN_CAMERA);
 
@@ -257,13 +163,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
 
-        String imageFileName = "MYAPPTEMP_" + timeStamp + " ";
+        String imageFileName = "XBalancer" + timeStamp;
 
 
         //Okej, här får vi platsen där alla bilder sparas
@@ -272,8 +177,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "This is storageDir.toString() : " + storageDir.toString());
 
 
-
-        File image = File.createTempFile(imageFileName,".jpg",storageDir );
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
         Log.d(TAG, "This is image.toString()      : " + image.toString());
 
 
@@ -281,6 +185,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void setPic() {
 
+        ImageView mImageView = findViewById(R.id.imageView1);
+        // Get the dimensions of the View
+        int targetW = mImageView.getWidth();
+        int targetH = mImageView.getHeight();
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(lastCameraFileUri, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(lastCameraFileUri, bmOptions);
+        mImageView.setImageBitmap(bitmap);
+    }
 
 }
