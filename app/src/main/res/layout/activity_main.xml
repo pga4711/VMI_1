@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.philip.mytestwithintents.MainActivity">
+
+    <LinearLayout
+        android:layout_width="368dp"
+        android:layout_height="456dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="28dp">
+
+        <Button
+            android:id="@+id/buttonX"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Call android gallery"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="133dp" />
+
+        <Button
+            android:id="@+id/callCameraButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Call Camera"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="50dp" />
+
+        <Button
+            android:id="@+id/buttonDoCameraPerm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Do camera permission"
+            tools:layout_editor_absoluteX="98dp"
+            tools:layout_editor_absoluteY="447dp" />
+
+        <Button
+            android:id="@+id/buttonTestCamPerm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test Camera permission"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="298dp" />
+
+        <Button
+            android:id="@+id/doStoragePerm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Do storage permission" />
+
+        <Button
+            android:id="@+id/testStoragePerm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test storage permission" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hello X 123"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
