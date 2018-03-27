@@ -30,6 +30,34 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <Button
+            android:id="@+id/startServiceBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="startService"
+            android:text="Start service" />
+
+        <Button
+            android:id="@+id/stopServiceBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="stopService"
+            android:text="Stop service" />
+
+        <Button
+            android:id="@+id/openSecondActivityBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="openSecondActivity"
+            android:text="Open Second Activity" />
+
+        <Button
+            android:id="@+id/listActivitiesBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="listActivities"
+            android:text="List all activities i Log.d" />
+
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="match_parent"

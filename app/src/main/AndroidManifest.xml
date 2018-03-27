@@ -18,6 +18,13 @@
         </activity>
 
 
+        <activity android:name=".SecondActivity"/>
+        <activity android:name=".ThirdActivity"/>
+
+
+        <service android:name=".TheCameraService"
+            android:exported="false"></service>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

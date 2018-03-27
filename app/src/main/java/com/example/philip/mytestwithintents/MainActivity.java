@@ -2,11 +2,12 @@ package com.example.philip.mytestwithintents;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
@@ -15,7 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.net.Uri; //?????
+import android.net.Uri;
 import android.widget.ImageView;
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     public String lastCameraFileUri;
     static final int REQUEST_OPEN_CAMERA =1;
     static final int REQUEST_PERMISSIONS = 2;
-    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,17 +56,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        handler = new Handler();
-
-        final Runnable r = new Runnable() {
-            public void run() {
-                Log.d(TAG, "HELLO FROM DELAY-THING");
-                handler.postDelayed(this, 1000);
-            }
-        };
-
-        handler.postDelayed(r, 1000);
     }
     //Denna anropas alltid när en activity är typ klar. Den funkar osm ett slot i QT.
     @Override
@@ -82,9 +71,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Call Camera funktionalities
-    //Den här ska starta upp kameran. Jag tror den ber android att starta kameran
-    // //så användaren kan ta en bild. MEn jag förstår inte varför man ska bland in en fil just då.
+    //This will start up the Native OEM-camera
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -104,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 //Denna getApplicationContext().getPackageName() returnerar com.example.philip.mytestwithintents
-                Uri photoURI = FileProvider.getUriForFile(this,
+                android.net.Uri photoURI = FileProvider.getUriForFile(this,
                         getApplicationContext().getPackageName() + ".fileprovider",
                         photoFile);
                 lastCameraFileUri = photoFile.toString();
@@ -123,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
         String imageFileName = "XBalancer" + timeStamp;
-        //Okej, här får vi platsen där alla bilder sparas
+
+        //Here we get the path where all pictures are stored
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
         Log.d(TAG, "This is storageDir.toString() : " + storageDir.toString());
@@ -158,5 +146,44 @@ public class MainActivity extends AppCompatActivity {
 
         Bitmap bitmap = BitmapFactory.decodeFile(lastCameraFileUri, bmOptions);
         mImageView.setImageBitmap(bitmap);
+    }
+
+
+    public void startService(View view){
+        Log.d(TAG,"start pressed");
+
+        Intent intent = new Intent(this,  TheCameraService.class);
+        startService(intent);
+    }
+
+    public void stopService(View view) {
+        Log.d(TAG,"STOP pressed");
+
+        Intent intent = new Intent(this,  TheCameraService.class);
+        stopService(intent);
+    }
+
+    public void openSecondActivity(View view){
+
+        Intent intent = new Intent(this, SecondActivity.class);
+        startActivity(intent);
+
+    }
+
+    public void listActivities(View view) {
+
+
+        PackageManager pManager = this.getPackageManager();
+        String packageName = this.getApplicationContext().getPackageName();
+
+        try {
+            ActivityInfo[] list = pManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES).activities;
+            for (ActivityInfo activityInfo : list) {
+                Log.d(TAG, "ActivityInfo = " + activityInfo.name);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 }
