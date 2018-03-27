@@ -14,16 +14,6 @@
         tools:layout_editor_absoluteY="28dp">
 
         <Button
-            android:id="@+id/buttonX"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Call android gallery"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.502"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="133dp" />
-
-        <Button
             android:id="@+id/callCameraButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
